@@ -8,11 +8,18 @@
 
 namespace App\controllers;
 
-class IndexController
+use Illuminate\Request;
+
+class IndexController extends BaseController
 {
 
     public function index()
     {
         echo 'Hello World!';
+    }
+
+    public function handle(Request $request, $id)
+    {
+        return $this->jsonSuccess(['id' => $id]);
     }
 }

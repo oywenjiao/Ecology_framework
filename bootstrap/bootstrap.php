@@ -34,6 +34,8 @@ class bootstrap
         self::exception();
         //cli模式不载入路由
         IS_CLI OR (require_once APP_PATH . '/config/routes.php');
+        //响应
+        app('Response')->send();
         // 日志
         self::log();
     }
