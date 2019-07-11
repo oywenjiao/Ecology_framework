@@ -10,13 +10,15 @@ namespace App\Controllers;
 
 use App\Models\User;
 use Illuminate\Request;
+use Illuminate\View;
 
 class IndexController extends BaseController
 {
 
     public function index()
     {
-        echo 'Hello World!';
+
+        return View::_instance()->with('title', '首页')->display('Index/index');
     }
 
     public function handle(Request $request, $id)
