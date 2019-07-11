@@ -6,7 +6,7 @@
  * Time: 15:59
  */
 
-namespace App\controllers;
+namespace App\Controllers;
 
 
 class BaseController
@@ -17,7 +17,7 @@ class BaseController
         return app('Response')->json(compact('code', 'msg', 'data'));
     }
 
-    public function jsonError($code = '201', $msg = '操作失败!')
+    public function jsonError($msg = '操作失败!', $code = '201')
     {
         return app('Response')->json(compact('code', 'msg'));
     }

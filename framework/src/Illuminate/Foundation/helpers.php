@@ -72,3 +72,63 @@ if (!function_exists('app')) {
         return $class::_instance();
     }
 }
+
+if (!function_exists('redis')) {
+    /**
+     * @param null $name
+     * @return \Redis
+     */
+    function redis($name = null)
+    {
+        return \Illuminate\Redis::_instance($name);
+    }
+}
+
+if (!function_exists('session')) {
+    /**
+     * 设置、获取session
+     * @param $name string 键名
+     * @param null $value string 值
+     * @return mixed
+     */
+    function session($name, $value = null)
+    {
+        if (config('app.session_dir') && !config('app.session')) {
+            is_dir(config('app.session_dir')) OR mkdir(config('app.session_dir'), 0777, true);
+            session_save_path(config('app.session_dir'));   // 设置session存储路径
+        }
+        session_start();
+        if ($value !== null) {
+            if (empty($value)) {
+                unset($_SESSION[$name]);
+            } else {
+                $_SESSION[$name] = $value;
+            }
+        }
+        session_write_close();
+        return isset($_SESSION[$name]) ? $_SESSION[$name] : null;
+    }
+}
+
+
+function debugLog($message = '', $data = [])
+{
+    appLog('debug', $message, $data);
+}
+
+function infoLog($message = '', $data = [])
+{
+    appLog('info', $message, $data);
+}
+
+function errorLog($message = '', $data = [])
+{
+    appLog('error', $message, $data);
+}
+
+function appLog($level, $message = '', $data = [])
+{
+    $info_log = new \Monolog\Logger('APP_LOG');
+    $info_log->pushHandler(new \Monolog\Handler\StreamHandler(RUNTIME_PATH . 'log/app/' . date('Y-m-d') . '.log', $level));
+    $info_log->$level($message, $data);
+}

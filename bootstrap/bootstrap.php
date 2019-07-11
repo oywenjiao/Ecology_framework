@@ -28,6 +28,8 @@ class bootstrap
         self::init();
         // 环境配置
         self::env();
+        // session系统
+        self::session();
         // 数据库载入
         self::database();
         // 错误提示
@@ -38,6 +40,7 @@ class bootstrap
         app('Response')->send();
         // 日志
         self::log();
+        define('APP_END', microtime(true));
     }
 
     /**
@@ -70,6 +73,26 @@ class bootstrap
             $dotenv = new Dotenv\Dotenv(APP_PATH);
         }
         $dotenv->load();
+    }
+
+    public static function session()
+    {
+        $session_driver = config('app.session');
+        if ($session_driver) {
+            $class = 'Illuminate\\Session\\' . $session_driver;
+            $handler = new $class;
+            session_set_save_handler(
+                array(&$handler, "open"),
+                array(&$handler, "close"),
+                array(&$handler, "read"),
+                array(&$handler, "write"),
+                array(&$handler, "destroy"),
+                array(&$handler, "gc")
+            );
+        } else {
+            ini_set('session.gc_maxlifetime', config('app.session_lefttime'));
+        }
+        register_shutdown_function('session_write_close');
     }
 
     //Eloquent ORM 模型配置
